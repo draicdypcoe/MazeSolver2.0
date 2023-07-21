@@ -1,5 +1,5 @@
-#include <bits/stdc++.h>
-#include<windows.h>
+#include<Vector.h>
+#include <ArduinoQueue.h>
 using namespace std;
 //TOP BOTTOM RIGHT LEFT
 #define ROW 8
@@ -33,7 +33,7 @@ using namespace std;
 
   Pair cur(7,0);
   
-  string headc="headtop";
+  String headc="headtop";
 
   int cell[ROW][COL]={
     {6,5,4,3,3,4,5,6},
@@ -125,9 +125,8 @@ void printAns(Pair start){
     }    
 }
 
-void queken(queue<Pair >&q,Pair pr){
+void queken(ArduinoQueue<Pair> &q,Pair pr){
   vector<nesPair>vr;
-
   if(celler[pr.first][pr.second].wall[0]){
     vr.push_back(nesPair(cell[pr.first-1][pr.second],pr.first-1,pr.second));
   }
@@ -147,7 +146,7 @@ void queken(queue<Pair >&q,Pair pr){
     if(minValue!=INT_MAX && cell[pr.first][pr.second]<=minValue){
       cell[pr.first][pr.second]=minValue+1;
       for(int i=0;i<vr.size();i++){
-        q.push({vr[i].y,vr[i].z});
+        q.enqueue({vr[i].y,vr[i].z});
       }
     }
 }
@@ -205,8 +204,8 @@ int bringTheval(int val){
 }
 
 void solve(){
-  queue<Pair>q;
-  q.push(cur);   
+  ArduinoQueue<Pair>q;
+  q.enqueue(cur);   
   
   bool a[4]={true,true,true,true};
   while(true){
@@ -225,21 +224,21 @@ void solve(){
           while(!q.empty()){
             Pair temp=q.front();
             queken(q,temp);
-            q.pop();
+            q.dequeue();
           }
         }
         // else{
-        //   while(!q.empty())q.pop();
+        //   while(!q.empty())q.dequeue();
         // }
 
         if(bringTheval(cell[cur.first][cur.second]>=cell[cur.first][cur.second])){
           cell[cur.first][cur.second]=bringTheval(cell[cur.first][cur.second])+1;
         }
 
-        string dir="";
+        String dir="";
         if(celler[cur.first][cur.second].wall[0]){
             if(cell[cur.first][cur.second]>cell[cur.first-1][cur.second]){
-            q.push(Pair(cur.first -1, cur.second));
+            q.enqueue(Pair(cur.first -1, cur.second));
                 minVal=cell[cur.first-1][cur.second];
                 next=Pair(cur.first-1,cur.second);
                 dir="Top";
@@ -249,7 +248,7 @@ void solve(){
 
         if (celler[cur.first][cur.second].wall[1]){ 
           if(cell[cur.first][cur.second]>cell[cur.first+1][cur.second]){
-          q.push(Pair(cur.first +1, cur.second));
+          q.enqueue(Pair(cur.first +1, cur.second));
             minVal=cell[cur.first+1][cur.second];
             next=Pair(cur.first+1,cur.second);
             dir="Bottom";
@@ -260,7 +259,7 @@ void solve(){
         if(celler[cur.first][cur.second].wall[2])
         {
           if(cell[cur.first][cur.second]>cell[cur.first][cur.second+1]){
-          q.push(Pair(cur.first,cur.second+1));
+          q.enqueue(Pair(cur.first,cur.second+1));
               minVal=cell[cur.first][cur.second+1];
               next=Pair(cur.first,cur.second+1);
               dir="Right";
@@ -270,7 +269,7 @@ void solve(){
 
         if (celler[cur.first][cur.second].wall[3]){ 
           if(cell[cur.first][cur.second]>cell[cur.first][cur.second-1]){
-              q.push(Pair(cur.first, cur.second - 1)); //incase lahan value asel tarch
+              q.enqueue(Pair(cur.first, cur.second - 1)); //incase lahan value asel tarch
               minVal=cell[cur.first][cur.second-1];
               next=Pair(cur.first,cur.second-1);
               dir="Left";
