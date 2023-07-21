@@ -48,7 +48,7 @@ struct queue {
 
     Pair front() {
         if (frontIndex == -1) {
-            return Pair(0,0);
+            return;
         }
         return *array[frontIndex];
     }
@@ -375,7 +375,7 @@ void solve(){
   }
 }
 
-int main()
+int retify()
 {
 
   for(int i=0;i<ROW;i++){
@@ -388,4 +388,10 @@ int main()
   trips.push_back(Pair(cur.first,cur.second));
   solve();
   return 0;
+}
+void setup(){
+  retify();
+}
+void loop(){
+  
 }
