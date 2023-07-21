@@ -10,28 +10,27 @@ using namespace std;
      int wall[4]={true,true,true,true};
      bool nev=false;
   };
-  struct Pair{
-    int first,second;
-    Pair(int a,int b){
-      this->first=a;
-      this->second=b;
-    }
+  struct pair{
+      int first,second;
+      pair(int a,int b){
+        this->first=a;
+        this->second=b;
+      }
   };
-
-  struct nesPair{
+  struct NEESpair{
     int x,y,z;
-    nesPair(int a,int b,int c){
+    NEESpair(int a,int b,int c){
       this->x=a;
       this->y=b;
       this->z=c;
     }
   };
 
-  vector<Pair > trips;
+  Vector<pair > trips;
   node celler[ROW][COL];
   node retEarn[ROW][COL];
 
-  Pair cur(7,0);
+  pair cur(7,0);
   
   String headc="headtop";
 
@@ -48,7 +47,7 @@ using namespace std;
 
   node retTrip[ROW][COL];
 
-  void wallSaver(Pair temp,bool a[3]){ //LHR
+  void wallSaver(pair temp,bool a[3]){ //LHR
   Serial.println(" orientation bolte !\n");
     if(headc=="headtop"){
       celler[temp.first][temp.second].wall[0]=a[1]; //top
@@ -97,8 +96,12 @@ void moveRight(){
   cur.second++;
 }
 
-void printAns(Pair start){
-    vector<vector<bool>>a(ROW,vector<bool>(ROW,false));
+void printAns(pair start){
+    // Vector<Vector<bool>>a(ROW,Vector<bool>(ROW,false));
+    int a[ROW][ROW];
+    for(int i=0;i<ROW;i++){
+      for(int j=0;j<ROW;j++)a[i][j]=false;
+    }
     for(int i=trips.size()-1;i>=0;i--){
         if(trips[i].first==cur.first&&trips[i].second==cur.second){
             continue;
@@ -114,36 +117,36 @@ void printAns(Pair start){
         }
 
         a[cur.first][cur.second]=true;
-        for(auto it: a){
-            for(auto ut: it){
-            Serial.print(ut);
-            Serial.print(' ');
-            }
-            Serial.println(' ');
-        }
-        Serial.println(' ');
+        // for(auto it: a){
+        //     for(auto ut: it){
+        //     Serial.print(ut);
+        //     Serial.print(' ');
+        //     }
+        //     Serial.println(' ');
+        // }
+        // Serial.println(' ');
     }    
 }
 
-void queken(ArduinoQueue<Pair> &q,Pair pr){
-  vector<nesPair>vr;
+void queken(ArduinoQueue<pair> &q,pair pr){
+  Vector<NEESpair>vr;
   if(celler[pr.first][pr.second].wall[0]){
-    vr.push_back(nesPair(cell[pr.first-1][pr.second],pr.first-1,pr.second));
+    vr.push_back(NEESpair(cell[pr.first-1][pr.second],pr.first-1,pr.second));
   }
   if(celler[pr.first][pr.second].wall[1]){
-    vr.push_back(nesPair(cell[pr.first+1][pr.second],pr.first+1,pr.second));
+    vr.push_back(NEESpair(cell[pr.first+1][pr.second],pr.first+1,pr.second));
   }
   if(celler[pr.first][pr.second].wall[2]){
-    vr.push_back(nesPair(cell[pr.first][pr.second+1],pr.first,pr.second+1));
+    vr.push_back(NEESpair(cell[pr.first][pr.second+1],pr.first,pr.second+1));
   }
   if(celler[pr.first][pr.second].wall[3]){
-    vr.push_back(nesPair(cell[pr.first][pr.second-1],pr.first,pr.second-1));
+    vr.push_back(NEESpair(cell[pr.first][pr.second-1],pr.first,pr.second-1));
   }
-  int minValue=INT_MAX;
+  int minValue=INT8_MAX;
   for(int i=0;i<vr.size();i++){
         minValue=(vr[i].x>minValue)?minValue:vr[i].x;
   }
-    if(minValue!=INT_MAX && cell[pr.first][pr.second]<=minValue){
+    if(minValue!=INT8_MAX && cell[pr.first][pr.second]<=minValue){
       cell[pr.first][pr.second]=minValue+1;
       for(int i=0;i<vr.size();i++){
         q.enqueue({vr[i].y,vr[i].z});
@@ -151,8 +154,8 @@ void queken(ArduinoQueue<Pair> &q,Pair pr){
     }
 }
 
-bool qNeeded(Pair pr){
-  vector<int>v;
+bool qNeeded(pair pr){
+  Vector<int>v;
 
 if(celler[pr.first][pr.second].wall[0]){
     v.push_back(cell[pr.first-1][pr.second]);
@@ -182,8 +185,8 @@ if(celler[pr.first][pr.second].wall[3]){
 }
 
 int bringTheval(int val){
-  //  vector<int>v; 
-   int miin=INT_MAX;
+  //  Vector<int>v; 
+   int miin=INT8_MAX;
     if(celler[cur.first][cur.second].wall[0]){
         // v.push_back(cell[cur.first-1][cur.second]);
         miin=(cell[cur.first-1][cur.second]<miin)?cell[cur.first-1][cur.second]:miin;
@@ -204,7 +207,7 @@ int bringTheval(int val){
 }
 
 void solve(){
-  ArduinoQueue<Pair>q;
+  ArduinoQueue<pair>q;
   q.enqueue(cur);   
   
   bool a[4]={true,true,true,true};
@@ -214,21 +217,21 @@ void solve(){
         
         print(cur.first,cur.second);
 
-        Pair next=Pair(cur.first,cur.second);
+        pair next=pair(cur.first,cur.second);
         int minVal = cell[cur.first][cur.second];
         Serial.print("possible directions to go: ");
         // cin>>a[0]>>a[1]>>a[2]; //take input from ultrasonic sensor
         wallSaver(cur,a);
 
         if(qNeeded(cur)){
-          while(!q.empty()){
-            Pair temp=q.front();
+          while(!q.isEmpty()){
+            pair temp=q.front();
             queken(q,temp);
             q.dequeue();
           }
         }
         // else{
-        //   while(!q.empty())q.dequeue();
+        //   while(!q.isEmpty())q.dequeue();
         // }
 
         if(bringTheval(cell[cur.first][cur.second]>=cell[cur.first][cur.second])){
@@ -238,9 +241,9 @@ void solve(){
         String dir="";
         if(celler[cur.first][cur.second].wall[0]){
             if(cell[cur.first][cur.second]>cell[cur.first-1][cur.second]){
-            q.enqueue(Pair(cur.first -1, cur.second));
+            q.enqueue(pair(cur.first -1, cur.second));
                 minVal=cell[cur.first-1][cur.second];
-                next=Pair(cur.first-1,cur.second);
+                next=pair(cur.first-1,cur.second);
                 dir="Top";
                 headc="headtop";
             }
@@ -248,9 +251,9 @@ void solve(){
 
         if (celler[cur.first][cur.second].wall[1]){ 
           if(cell[cur.first][cur.second]>cell[cur.first+1][cur.second]){
-          q.enqueue(Pair(cur.first +1, cur.second));
+          q.enqueue(pair(cur.first +1, cur.second));
             minVal=cell[cur.first+1][cur.second];
-            next=Pair(cur.first+1,cur.second);
+            next=pair(cur.first+1,cur.second);
             dir="Bottom";
             headc="headbottom";
           }
@@ -259,9 +262,9 @@ void solve(){
         if(celler[cur.first][cur.second].wall[2])
         {
           if(cell[cur.first][cur.second]>cell[cur.first][cur.second+1]){
-          q.enqueue(Pair(cur.first,cur.second+1));
+          q.enqueue(pair(cur.first,cur.second+1));
               minVal=cell[cur.first][cur.second+1];
-              next=Pair(cur.first,cur.second+1);
+              next=pair(cur.first,cur.second+1);
               dir="Right";
               headc="headright";
           }
@@ -269,9 +272,9 @@ void solve(){
 
         if (celler[cur.first][cur.second].wall[3]){ 
           if(cell[cur.first][cur.second]>cell[cur.first][cur.second-1]){
-              q.enqueue(Pair(cur.first, cur.second - 1)); //incase lahan value asel tarch
+              q.enqueue(pair(cur.first, cur.second - 1)); //incase lahan value asel tarch
               minVal=cell[cur.first][cur.second-1];
-              next=Pair(cur.first,cur.second-1);
+              next=pair(cur.first,cur.second-1);
               dir="Left";
               headc="headleft";
           }
@@ -303,9 +306,9 @@ void solve(){
         retTrip[cur.first][cur.second].nev=~retTrip[cur.first][cur.second].nev;
 
         if(cell[cur.first][cur.second]==0){
-          cin>>a[0]>>a[1]>>a[2];
-          wallSaver({cur.first,cur.second},a);
-          printAns({cur.first,cur.second});
+          // cin>>a[0]>>a[1]>>a[2];
+          // wallSaver({cur.first,cur.second},a);
+          // printAns({cur.first,cur.second});
           break;
         }
         //ethically dedicate direction function should called 
@@ -322,7 +325,7 @@ int main()
       celler[i][0].wall[3]=false;
   }
   retTrip[cur.first][cur.second].nev=true;
-  trips.push_back(Pair(cur.first,cur.second));
+  trips.push_back(pair(cur.first,cur.second));
   solve();
   return 0;
 }
