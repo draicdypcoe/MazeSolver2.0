@@ -377,7 +377,12 @@ void solve(){
 }
 
 int retify()
-{
+{ queue<int>rrr;
+  vector<pair<int,int>>vvrgrg;
+  vvrgrg.push_back({33,33});
+  Serial.println("pair values:");
+  Serial.print( vvrgrg[0].first);
+  Serial.print( vvrgrg[0].second);
   for(int i=0;i<ROW;i++){
       celler[0][i].wall[0]=false;
       celler[ROW-1][i].wall[1]=false;
