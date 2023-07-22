@@ -1,97 +1,18 @@
-#include<Vector.h>
+#include <bits/stdc++.h>
 using namespace std;
 //TOP BOTTOM RIGHT LEFT
 #define ROW 8
 #define COL 8
 
   struct node{
+     int row,col;
      int wall[4]={true,true,true,true};
      bool nev=false;
   };
-  struct Pair{
-      int first,second;
-      Pair(int a,int b){
-        this->first=a;
-        this->second=b;
-      }
-  };
-  struct NEESPair{
-    int x,y,z;
-    NEESPair(int a,int b,int c){
-      this->x=a;
-      this->y=b;
-      this->z=c;
-    }
-  };
-
-struct queue {
-    Pair* array[100];
-    int frontIndex;    // It stores the index of an element which is present at the top of a queue.
-    int rearIndex;     // It tells us the next position in the array where the element is to be inserted.
-    int maxSize = 100; // It stores the total capacity of an array.
-    int size=0;          // It stores the number of elements which are being present in the array.
-
-    queue(int ss) {
-        maxSize = ss;
-        frontIndex = -1;
-        rearIndex = 0;
-        this->size = 0;
-    }
-
-    int getSize() {
-        return size;
-    }
-
-    bool isEmpty() {
-        return size == 0;
-    }
-
-    Pair front() {
-        if (frontIndex == -1) {
-            return;
-        }
-        return *array[frontIndex];
-    }
-
-    void push(Pair elem) {
-        if (size == maxSize) {
-            return;
-        }
-
-        if (frontIndex == -1) {
-            frontIndex = 0;
-        }
-        array[rearIndex] = new Pair(elem); // Create a new Pair object on the heap and store its pointer in the array
-        rearIndex++;
-        size++;
-    }
-
-    Pair pop() {
-        if (frontIndex == -1) {
-            // Return a default-initialized Pair if queue is empty
-            return;
-        }
-        Pair temp = *array[frontIndex];
-        delete array[frontIndex]; // Deallocate the memory allocated on the heap
-        for (int i = 0; i < size - 1; i++) {
-            array[i] = array[i + 1];
-        }
-        rearIndex--;
-        size--;
-        if (size == 0) {
-            frontIndex = -1;
-            rearIndex = 0;
-        }
-        return temp;
-    }
-};
-
-  Vector<Pair> trips;
+  vector<pair<int,int>> trips;
   node celler[ROW][COL];
   node retEarn[ROW][COL];
-
-  Pair cur(7,0);
-  
+  pair<int,int>cur={7,0};
   String headc="headtop";
 
   int cell[ROW][COL]={
@@ -107,8 +28,9 @@ struct queue {
 
   node retTrip[ROW][COL];
 
-  void wallSaver(Pair temp,bool a[3]){ //LHR
-  Serial.println(" orientation bolte !\n");
+  void wallSaver(pair<int,int>temp,bool a[3]){ //LHR
+  Serial.print(headc);
+  Serial.println("    orientation bolte!");
     if(headc=="headtop"){
       celler[temp.first][temp.second].wall[0]=a[1]; //top
       celler[temp.first][temp.second].wall[2]=a[2]; //right
@@ -133,11 +55,9 @@ struct queue {
       for(int j=0;j<COL;j++){
         if(i==a&&j==b){
           Serial.print(cell[i][j]);
-          Serial.print('.');
           continue;
         }
-        Serial.print(cell[i][j]);
-        Serial.print(' ');
+  Serial.print(cell[i][j]);Serial.print(' ');
       }
       Serial.println(' ');
     }
@@ -156,13 +76,10 @@ void moveRight(){
   cur.second++;
 }
 
-void printAns(Pair start){
-    // Vector<Vector<bool>>a(ROW,Vector<bool>(ROW,false));
-    int a[ROW][ROW];
-    for(int i=0;i<ROW;i++){
-      for(int j=0;j<ROW;j++)a[i][j]=false;
-    }
+void printAns(pair<int,int>start){
+    vector<vector<bool>>a(ROW,vector<bool>(ROW,false));
     for(int i=trips.size()-1;i>=0;i--){
+        cout<<trips[i].first<<" "<<trips[i].second<<endl;
         if(trips[i].first==cur.first&&trips[i].second==cur.second){
             continue;
         }
@@ -177,45 +94,46 @@ void printAns(Pair start){
         }
 
         a[cur.first][cur.second]=true;
-        // for(auto it: a){
-        //     for(auto ut: it){
-        //     Serial.print(ut);
-        //     Serial.print(' ');
-        //     }
-        //     Serial.println(' ');
-        // }
-        // Serial.println(' ');
+        for(auto it: a){
+            for(auto ut: it){
+                cout<<ut<<" ";
+  Serial.print(ut);Serial.print(" ");
+            }Serial.println(' ');
+        }
+        Serial.println(' ');
     }    
+    
 }
 
-void queken(queue &q,Pair pr){
-  Vector<NEESPair>vr;
-  if(celler[pr.first][pr.second].wall[0]){
-    vr.push_back(NEESPair(cell[pr.first-1][pr.second],pr.first-1,pr.second));
+void queken(queue<pair<int,int>>&q,pair<int,int>pr){
+  vector<pair<int,pair<int,int>>>vr;
+
+  if(celler[pr.first][pr.second].wall[0]){ //celler se test krre
+    vr.push_back({cell[pr.first-1][pr.second],{pr.first-1,pr.second}});
   }
   if(celler[pr.first][pr.second].wall[1]){
-    vr.push_back(NEESPair(cell[pr.first+1][pr.second],pr.first+1,pr.second));
+    vr.push_back({cell[pr.first+1][pr.second],{pr.first+1,pr.second}});
   }
   if(celler[pr.first][pr.second].wall[2]){
-    vr.push_back(NEESPair(cell[pr.first][pr.second+1],pr.first,pr.second+1));
+    vr.push_back({cell[pr.first][pr.second+1],{pr.first,pr.second+1}});
   }
   if(celler[pr.first][pr.second].wall[3]){
-    vr.push_back(NEESPair(cell[pr.first][pr.second-1],pr.first,pr.second-1));
+    vr.push_back({cell[pr.first][pr.second-1],{pr.first,pr.second-1}});
   }
-  int minValue=INT8_MAX;
-  for(int i=0;i<vr.size();i++){
-        minValue=(vr[i].x>minValue)?minValue:vr[i].x;
+  int minValue=INT_MAX;
+  for(auto it: vr){
+        minValue=min(it.first,minValue);
   }
-    if(minValue!=INT8_MAX && cell[pr.first][pr.second]<=minValue){
+    if(minValue!=INT_MAX && cell[pr.first][pr.second]<=minValue){
       cell[pr.first][pr.second]=minValue+1;
-      for(int i=0;i<vr.size();i++){
-        q.push(Pair(vr[i].y,vr[i].z));
+      for(auto it: vr){
+        q.push({it.second.first,it.second.second});
       }
     }
 }
 
-bool qNeeded(Pair pr){
-  Vector<int>v;
+bool qNeeded(pair<int,int>pr){
+  vector<int>v;
 
 if(celler[pr.first][pr.second].wall[0]){
     v.push_back(cell[pr.first-1][pr.second]);
@@ -231,13 +149,12 @@ if(celler[pr.first][pr.second].wall[3]){
 }
 
   if(v.size()==1){
-    Serial.println("q madhe single element aahe\n");
     return false;
   }
   int firstElement = v[0];
   for (int i = 1; i < v.size(); i++) {
       if (v[i] != firstElement) {
-          Serial.print(" false fekt aahe ithe -> ~q Need\n");
+          cout<<" false fekt aahe ithe -> ~q Need\n";
           return false;
       }
   }  
@@ -245,53 +162,60 @@ if(celler[pr.first][pr.second].wall[3]){
 }
 
 int bringTheval(int val){
-  //  Vector<int>v; 
-   int miin=INT8_MAX;
+   vector<int>v;
     if(celler[cur.first][cur.second].wall[0]){
-        // v.push_back(cell[cur.first-1][cur.second]);
-        miin=(cell[cur.first-1][cur.second]<miin)?cell[cur.first-1][cur.second]:miin;
+        v.push_back(cell[cur.first-1][cur.second]);
     }
     if(celler[cur.first][cur.second].wall[1]){
-        // v.push_back(cell[cur.first+1][cur.second]);
-        miin=(cell[cur.first+1][cur.second]<miin)?cell[cur.first+1][cur.second]:miin;
+        v.push_back(cell[cur.first+1][cur.second]);
     }
     if(celler[cur.first][cur.second].wall[2]){
-        // v.push_back(cell[cur.first][cur.second+1]);
-        miin=(cell[cur.first][cur.second+1])<miin?cell[cur.first][cur.second+1]:miin;
+        v.push_back(cell[cur.first][cur.second+1]);
     }
     if(celler[cur.first][cur.second].wall[3]){
-        // v.push_back(cell[cur.first][cur.second-1]);
-        miin=(cell[cur.first][cur.second-1]<miin)?cell[cur.first][cur.second-1]:miin;
+        v.push_back(cell[cur.first][cur.second-1]);
     }
-    return miin;
+    return *min_element(v.begin(),v.end());
 }
 
 void solve(){
-  queue q(256);
+  queue<pair<int,int>>q;
   q.push(cur);   
   
   bool a[4]={true,true,true,true};
   while(true){
-        Serial.print(headc);
-        Serial.println("                       Print karnyadhi !\n");
-        
+  Serial.print(headc);Serial.print(" PrintKarnyaadhi");
+
         print(cur.first,cur.second);
 
-        Pair next=Pair(cur.first,cur.second);
+        pair<int, int> next={cur.first,cur.second};
         int minVal = cell[cur.first][cur.second];
-        Serial.print("possible directions to go: ");
-        // cin>>a[0]>>a[1]>>a[2]; //take input from ultrasonic sensor
+  Serial.print(" possible directions to go: ");
+        //cin>>a[0]>>a[1]>>a[2]; //take input from ultrasonic sensor
+
+        if (Serial.available() >= 7) { 
+            for (int i = 0; i < 3; i++) {
+              a[i] = Serial.parseInt();
+              while (Serial.peek() == ' ' || Serial.peek() == ',' || Serial.peek() == '\t') {
+                Serial.read();
+              }
+            } 
+        }
+
+
+
         wallSaver(cur,a);
 
         if(qNeeded(cur)){
-          while(!q.isEmpty()){
-            Pair temp=q.front();
+  Serial.println("q kde kam assign ->");
+          while(!q.empty()){
+            pair<int,int>temp=q.front();
             queken(q,temp);
             q.pop();
           }
         }
         // else{
-        //   while(!q.isEmpty())q.pop();
+        //   while(!q.empty())q.pop();
         // }
 
         if(bringTheval(cell[cur.first][cur.second]>=cell[cur.first][cur.second])){
@@ -301,9 +225,9 @@ void solve(){
         String dir="";
         if(celler[cur.first][cur.second].wall[0]){
             if(cell[cur.first][cur.second]>cell[cur.first-1][cur.second]){
-            q.push(Pair(cur.first -1, cur.second));
+            q.push({cur.first -1, cur.second});
                 minVal=cell[cur.first-1][cur.second];
-                next=Pair(cur.first-1,cur.second);
+                next={cur.first-1,cur.second};
                 dir="Top";
                 headc="headtop";
             }
@@ -311,9 +235,9 @@ void solve(){
 
         if (celler[cur.first][cur.second].wall[1]){ 
           if(cell[cur.first][cur.second]>cell[cur.first+1][cur.second]){
-          q.push(Pair(cur.first +1, cur.second));
+          q.push({cur.first +1, cur.second});
             minVal=cell[cur.first+1][cur.second];
-            next=Pair(cur.first+1,cur.second);
+            next={cur.first+1,cur.second};
             dir="Bottom";
             headc="headbottom";
           }
@@ -322,9 +246,9 @@ void solve(){
         if(celler[cur.first][cur.second].wall[2])
         {
           if(cell[cur.first][cur.second]>cell[cur.first][cur.second+1]){
-          q.push(Pair(cur.first,cur.second+1));
+          q.push({cur.first, cur.second+1});
               minVal=cell[cur.first][cur.second+1];
-              next=Pair(cur.first,cur.second+1);
+              next={cur.first,cur.second+1};
               dir="Right";
               headc="headright";
           }
@@ -332,9 +256,9 @@ void solve(){
 
         if (celler[cur.first][cur.second].wall[3]){ 
           if(cell[cur.first][cur.second]>cell[cur.first][cur.second-1]){
-              q.push(Pair(cur.first, cur.second - 1)); //incase lahan value asel tarch
+              q.push({cur.first, cur.second - 1}); //incase lahan value asel tarch
               minVal=cell[cur.first][cur.second-1];
-              next=Pair(cur.first,cur.second-1);
+              next={cur.first,cur.second-1};
               dir="Left";
               headc="headleft";
           }
@@ -343,9 +267,11 @@ void solve(){
         if(retTrip[next.first][next.second].nev){
           retTrip[cur.first][cur.second].nev=false;
           trips.pop_back();
+  Serial.println(" pop krhe elment yahape! ");
         }
 
         //Command Directions
+        // cur=next;
         if(dir=="Top"){
           moveTop();
           headc="headtop";
@@ -361,21 +287,36 @@ void solve(){
         }
 
         if(!retTrip[cur.first][cur.second].nev){
+          // retEarn[cur.first][cur.second].nev=true;
           trips.push_back({cur.first,cur.second});
+        Serial.println("push krhe yahape ");
         }
         retTrip[cur.first][cur.second].nev=~retTrip[cur.first][cur.second].nev;
 
         if(cell[cur.first][cur.second]==0){
+  Serial.print("input at dst: ");
           // cin>>a[0]>>a[1]>>a[2];
-          // wallSaver({cur.first,cur.second},a);
-          // printAns({cur.first,cur.second});
+
+         
+           if (Serial.available() >= 7) { 
+            for (int i = 0; i < 3; i++) {
+              a[i] = Serial.parseInt();
+              while (Serial.peek() == ' ' || Serial.peek() == ',' || Serial.peek() == '\t') {
+                Serial.read();
+              }
+            } 
+          }
+
+          wallSaver({cur.first,cur.second},a);
+          printAns({cur.first,cur.second});
           break;
         }
         //ethically dedicate direction function should called 
+
   }
 }
 
-int retify()
+void retify()
 {
 
   for(int i=0;i<ROW;i++){
@@ -385,13 +326,19 @@ int retify()
       celler[i][0].wall[3]=false;
   }
   retTrip[cur.first][cur.second].nev=true;
-  trips.push_back(Pair(cur.first,cur.second));
+  trips.push_back({cur.first,cur.second});
   solve();
-  return 0;
 }
 void setup(){
-  retify();
+  Serial.begin(9600);
+  Serial.print("sdsdsadas");
+  // retify(); 
+  // deay(20000);
 }
-void loop(){
-  
-}
+bool once=true;
+// void loop(){
+//   Serial.println("something");
+//   if(once==true){
+//     once=false;
+//   }
+// }
