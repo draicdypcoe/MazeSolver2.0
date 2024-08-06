@@ -229,7 +229,7 @@ void solve(){
 
         string dir="";
         if(celler[cur.first][cur.second].wall[0]){
-            if(minVal>cell[cur.first-1][cur.second]){
+            if(cell[cur.first][cur.second]>cell[cur.first-1][cur.second]){
                 q.push({cur.first -1, cur.second});
                 minVal=cell[cur.first-1][cur.second];
                 next={cur.first-1,cur.second};
@@ -239,7 +239,7 @@ void solve(){
         }
 
         if (celler[cur.first][cur.second].wall[1]){ 
-          if(minVal>cell[cur.first+1][cur.second]){
+          if(cell[cur.first][cur.second]>cell[cur.first+1][cur.second]){
           q.push({cur.first +1, cur.second});
             minVal=cell[cur.first+1][cur.second];
             next={cur.first+1,cur.second};
@@ -250,7 +250,7 @@ void solve(){
 
         if(celler[cur.first][cur.second].wall[2])
         {
-          if(minVal>cell[cur.first][cur.second+1]){
+          if(cell[cur.first][cur.second]>cell[cur.first][cur.second+1]){
             cout<<"HappeningGGG"<<endl;
           q.push({cur.first, cur.second+1});
               minVal=cell[cur.first][cur.second+1];
@@ -261,7 +261,7 @@ void solve(){
         }
 
         if (celler[cur.first][cur.second].wall[3]){ 
-          if(minVal>cell[cur.first][cur.second-1]){
+          if(cell[cur.first][cur.second]>cell[cur.first][cur.second-1]){
               q.push({cur.first, cur.second - 1}); //incase lahan value asel tarch
               minVal=cell[cur.first][cur.second-1];
               next={cur.first,cur.second-1};
