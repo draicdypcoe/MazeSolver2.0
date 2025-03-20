@@ -5,7 +5,7 @@ using namespace std;
 #define N 5   //col
 
 // pair<int,int> src={4,0};
-pair<int,int> dst={2,2};
+pair<int,int> dst={0,4};
 pair<int,int> cur={4,0};
 
 // vector<pair<int,int>>sign={{0,1},{0,-1},{1,0},{-1,0}};
